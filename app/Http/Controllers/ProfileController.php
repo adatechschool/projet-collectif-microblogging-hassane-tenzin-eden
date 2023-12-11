@@ -6,8 +6,10 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redirect
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use App\Models\Profile;
 
 class ProfileController extends Controller
 {
@@ -16,6 +18,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = DB::table("users")->get()->where("id", $request->id);
+        $profile = new Profile();
+        $profile->bio = $request->bio;
+        $profile->save();
+        $user->profile()->associate($profile);
+        $user->save()
+        dd($user)
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
